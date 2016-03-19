@@ -5279,7 +5279,7 @@ $__System.register('45', ['6', '7', '8', '40', '41', '44', 'b'], function (_expo
     this.balls = {}; //all balls
     this.my_balls = []; //IDs of my balls
     this.score = 0; //my score
-    this.leaders = []; //IDs of leaders in FFA mode
+    this.leaders = []; //[ID, name] of leaders in FFA mode
     this.teams_scores = []; //scores of teams in Teams mode
     this.auth_token = ''; //auth token. Check README.md how to get it
     this.auth_provider = 1; //auth provider. 1 = facebook, 2 = google
@@ -5646,8 +5646,7 @@ $__System.register('45', ['6', '7', '8', '40', '41', '44', 'b'], function (_expo
                 if (char === 0) break;
                 name += String.fromCharCode(char);
               }
-
-              users.push(id);
+              users.push([id, name]);
               var ball = client.balls[id] || new Ball(client, id);
               if (name) ball.setName(name);
               ball.update();
@@ -5731,7 +5730,7 @@ $__System.register('45', ['6', '7', '8', '40', '41', '44', 'b'], function (_expo
           254: function _(client) {
             if (client.debug >= 1) client.log(client.balls[client.leaders[0]] + ' WON THE GAME! Server going for restart');
 
-            client.emitEvent('winner', client.leaders[0]);
+            client.emitEvent('winner', client.leaders[0][0]);
           }
         },
 
@@ -19669,10 +19668,9 @@ $__System.register('4d', ['2', '3', '9', '45', '48', 'a', '4c'], function (_expo
           });
           client.on('leaderBoardUpdate', function (old, leaders) {
             var leaderBoards = [];
-            leaders.forEach(function (id, index) {
-              leaderBoards.push(index + 1 + '. ' + client.balls[id].name || 'An unnamed cell');
+            leaders.forEach(function (item, index) {
+              leaderBoards.push(index + 1 + '. ' + item[1] || 'An unnamed cell');
             });
-            console.log(old, leaders);
             dom.leaderBoard.html(leaderBoards.join('<br />'));
           });
 
