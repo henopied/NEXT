@@ -19758,6 +19758,9 @@ $__System.registerDynamic("4e", [], true, function($__require, exports, module) 
     height() {
       return this.maxY - this.minY;
     }
+    isLegit() {
+      return this.width() >= 6000 && this.height() >= 3400;
+    }
     static default() {
       const dim = -1000;
       return new MapSize(-dim, dim, -dim, dim);
@@ -35735,18 +35738,21 @@ $__System.registerDynamic("ed", ["4e", "e6", "e7", "e8", "e9", "eb", "41"], true
       this.addRenderer();
       this.addStats();
       this.mapSize = MapSize.default();
-      client.once('mapSizeLoad', (minX, minY, maxX, maxY) => {
-        this.mapSize = new MapSize(minX, minY, maxX, maxY);
-        this.gameWidth = maxX;
-        this.gameHeight = maxY;
+      client.once('connected', () => {
         this.zoom = 0;
         this.initStage();
         this.addListners();
-        this.addBorders();
         this.animate();
         this.homeview = true;
         client.once('myNewBall', () => this.homeview = false);
         this.emit('launched');
+      });
+      client.on('mapSizeLoad', (minX, minY, maxX, maxY) => {
+        const mapSize = new MapSize(minX, minY, maxX, maxY);
+        if (mapSize.isLegit()) {
+          this.mapSize = mapSize;
+          this.updateBorders();
+        }
       });
       window.addEventListener('resize', () => this.updateSize());
       window.addEventListener('wheel', (e) => this.modifyZoom(e.deltaY));
@@ -35794,12 +35800,15 @@ $__System.registerDynamic("ed", ["4e", "e6", "e7", "e8", "e9", "eb", "41"], true
       });
       this.client.on('ballDestroy', (id) => delete this.client.balls[id]);
     }
-    addBorders() {
-      this.borders = new PIXI.Graphics();
+    updateBorders() {
+      if (!this.borders) {
+        this.borders = new PIXI.Graphics();
+        this.stage.addChild(this.borders);
+      }
+      this.borders.clear();
       this.borders.lineStyle(5, 0xFF3300, 1);
       const s = this.mapSize;
       this.borders.drawRect(s.minX, s.minY, s.width(), s.height());
-      this.stage.addChild(this.borders);
     }
     addStats() {
       this.stats = new Stats();
