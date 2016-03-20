@@ -5756,43 +5756,6 @@ $__System.register('44', ['5', '6', '7', '40', '43', 'a', '3f'], function (_expo
     }
   };
 });
-$__System.register('45', ['46'], function (_export) {
-  'use strict';
-
-  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, joinBtn, createBtn, region, gameMode, token;
-  return {
-    setters: [function (_) {
-      $ = _['default'];
-    }],
-    execute: function () {
-      overlay = $('.overlay');
-      mainPanel = overlay.find('.main-panel');
-      leaderBoard = $('#leaderboard div');
-      statusBox = $('#status-box');
-      nick = mainPanel.find('input#nick');
-      playBtn = mainPanel.find('button#playBtn');
-      joinBtn = mainPanel.find('button#joinBtn');
-      createBtn = mainPanel.find('button#createBtn');
-      region = mainPanel.find('#region');
-      gameMode = mainPanel.find('#gameMode');
-      token = mainPanel.find('#token');
-
-      _export('default', {
-        overlay: overlay,
-        mainPanel: mainPanel,
-        leaderBoard: leaderBoard,
-        statusBox: statusBox,
-        nick: nick,
-        playBtn: playBtn,
-        region: region,
-        gameMode: gameMode,
-        token: token,
-        joinBtn: joinBtn,
-        createBtn: createBtn
-      });
-    }
-  };
-});
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 (function(global, factory) {
@@ -11796,7 +11759,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
   });
   jQuery.fn.andSelf = jQuery.fn.addBack;
   if (typeof define === "function" && define.amd) {
-    define("47", [], function() {
+    define("45", [], function() {
       return jQuery;
     });
   }
@@ -11821,12 +11784,49 @@ _removeDefine();
 })();
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
-define("46", ["47"], function(main) {
+define("46", ["45"], function(main) {
   return main;
 });
 
 _removeDefine();
 })();
+$__System.register('47', ['46'], function (_export) {
+  'use strict';
+
+  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, joinBtn, createBtn, region, gameMode, token;
+  return {
+    setters: [function (_) {
+      $ = _['default'];
+    }],
+    execute: function () {
+      overlay = $('.overlay');
+      mainPanel = overlay.find('.main-panel');
+      leaderBoard = $('#leaderboard div');
+      statusBox = $('#status-box');
+      nick = mainPanel.find('input#nick');
+      playBtn = mainPanel.find('button#playBtn');
+      joinBtn = mainPanel.find('button#joinBtn');
+      createBtn = mainPanel.find('button#createBtn');
+      region = mainPanel.find('#region');
+      gameMode = mainPanel.find('#gameMode');
+      token = mainPanel.find('#token');
+
+      _export('default', {
+        overlay: overlay,
+        mainPanel: mainPanel,
+        leaderBoard: leaderBoard,
+        statusBox: statusBox,
+        nick: nick,
+        playBtn: playBtn,
+        region: region,
+        gameMode: gameMode,
+        token: token,
+        joinBtn: joinBtn,
+        createBtn: createBtn
+      });
+    }
+  };
+});
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 (function(global, factory) {
@@ -19453,8 +19453,8 @@ $__System.registerDynamic("4b", ["4a"], true, function($__require, exports, modu
   return module.exports;
 });
 
-$__System.register('4c', ['2', '8', '9', '44', '45', '46', '4b'], function (_export) {
-  var constants, _createClass, _classCallCheck, AgarioClient, dom, $, bootstrap, Controller;
+$__System.register('4c', ['2', '8', '9', '44', '47', '4b'], function (_export) {
+  var constants, _createClass, _classCallCheck, AgarioClient, dom, bootstrap, Controller;
 
   return {
     setters: [function (_3) {
@@ -19467,8 +19467,6 @@ $__System.register('4c', ['2', '8', '9', '44', '45', '46', '4b'], function (_exp
       AgarioClient = _4['default'];
     }, function (_5) {
       dom = _5['default'];
-    }, function (_6) {
-      $ = _6['default'];
     }, function (_b) {
       bootstrap = _b;
     }],
@@ -19548,13 +19546,19 @@ $__System.register('4c', ['2', '8', '9', '44', '45', '46', '4b'], function (_exp
             });
 
             this.client.on('leaderBoardUpdate', function (old, leaders) {
-              dom.leaderBoard.empty();
+              var leaderBoards = [];
               leaders.forEach(function (item, index) {
                 var text = index + 1 + '. ' + (item[1] || 'An unnamed cell');
-                var elem = $('<div/>').text(text);
-                if (item[0]) elem.addClass('me');
-                dom.leaderBoard.append(elem);
+                if (item[0]) {
+                  // current user
+                  text = '<div class="me">' + text + '</div>';
+                } else {
+                  text = '<div>' + text + '</div>';
+                }
+                leaderBoards.push(text);
               });
+
+              dom.leaderBoard.html(leaderBoards.join('\n'));
             });
           }
         }, {
