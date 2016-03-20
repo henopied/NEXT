@@ -5907,6 +5907,37 @@ $__System.register('45', ['6', '7', '8', '40', '41', '44', 'b'], function (_expo
     }
   };
 });
+$__System.register('46', ['47'], function (_export) {
+  'use strict';
+
+  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, region, gameMode;
+  return {
+    setters: [function (_) {
+      $ = _['default'];
+    }],
+    execute: function () {
+      overlay = $('.overlay');
+      mainPanel = overlay.find('.main-panel');
+      leaderBoard = $('#leaderboard div');
+      statusBox = $('#status-box');
+      nick = mainPanel.find('input#nick');
+      playBtn = mainPanel.find('button#playBtn');
+      region = mainPanel.find('#region');
+      gameMode = mainPanel.find('#gameMode');
+
+      _export('default', {
+        overlay: overlay,
+        mainPanel: mainPanel,
+        leaderBoard: leaderBoard,
+        statusBox: statusBox,
+        nick: nick,
+        playBtn: playBtn,
+        region: region,
+        gameMode: gameMode
+      });
+    }
+  };
+});
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 (function(global, factory) {
@@ -11910,7 +11941,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
   });
   jQuery.fn.andSelf = jQuery.fn.addBack;
   if (typeof define === "function" && define.amd) {
-    define("46", [], function() {
+    define("48", [], function() {
       return jQuery;
     });
   }
@@ -11935,43 +11966,12 @@ _removeDefine();
 })();
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
-define("47", ["46"], function(main) {
+define("47", ["48"], function(main) {
   return main;
 });
 
 _removeDefine();
 })();
-$__System.register('48', ['47'], function (_export) {
-  'use strict';
-
-  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, region, gameMode;
-  return {
-    setters: [function (_) {
-      $ = _['default'];
-    }],
-    execute: function () {
-      overlay = $('.overlay');
-      mainPanel = overlay.find('.main-panel');
-      leaderBoard = $('#leaderboard div');
-      statusBox = $('#status-box');
-      nick = mainPanel.find('input#nick');
-      playBtn = mainPanel.find('button#playBtn');
-      region = mainPanel.find('#region');
-      gameMode = mainPanel.find('#gameMode');
-
-      _export('default', {
-        overlay: overlay,
-        mainPanel: mainPanel,
-        leaderBoard: leaderBoard,
-        statusBox: statusBox,
-        nick: nick,
-        playBtn: playBtn,
-        region: region,
-        gameMode: gameMode
-      });
-    }
-  };
-});
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 (function(global, factory) {
@@ -19598,8 +19598,8 @@ $__System.registerDynamic("4c", ["4b"], true, function($__require, exports, modu
   return module.exports;
 });
 
-$__System.register('4d', ['2', '3', '9', '45', '48', 'a', '4c'], function (_export) {
-  var Connector, constants, _createClass, AgarioClient, dom, _classCallCheck, bootstrap, Controller;
+$__System.register('4d', ['2', '3', '9', '45', '46', '47', 'a', '4c'], function (_export) {
+  var Connector, constants, _createClass, AgarioClient, dom, $, _classCallCheck, bootstrap, Controller;
 
   return {
     setters: [function (_2) {
@@ -19612,6 +19612,8 @@ $__System.register('4d', ['2', '3', '9', '45', '48', 'a', '4c'], function (_expo
       AgarioClient = _4['default'];
     }, function (_5) {
       dom = _5['default'];
+    }, function (_6) {
+      $ = _6['default'];
     }, function (_a) {
       _classCallCheck = _a['default'];
     }, function (_c) {
@@ -19667,11 +19669,13 @@ $__System.register('4d', ['2', '3', '9', '45', '48', 'a', '4c'], function (_expo
             dom.overlay.show();
           });
           client.on('leaderBoardUpdate', function (old, leaders) {
-            var leaderBoards = [];
+            dom.leaderBoard.empty();
             leaders.forEach(function (item, index) {
-              leaderBoards.push(index + 1 + '. ' + item[1] || 'An unnamed cell');
+              var text = index + 1 + '. ' + (item[1] || 'An unnamed cell');
+              var elem = $('<div/>').text(text);
+              if (item[0]) elem.addClass('me');
+              dom.leaderBoard.append(elem);
             });
-            dom.leaderBoard.html(leaderBoards.join('<br />'));
           });
 
           this.connector.onconnect = function () {
