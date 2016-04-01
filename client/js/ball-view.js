@@ -45,6 +45,7 @@ class BallView {
       this.size.set(newSize, 120);
       this.container.zIndex = newSize;
       this.main.reSort = true;
+      this.updateRes(newSize);
     });
     this.container.zIndex = this.ball.size;
     this.container.ballId = this.ball.id;
@@ -63,7 +64,7 @@ class BallView {
     this.x.write(this.ball.x);
     this.y.write(this.ball.y);
     this.size.write(this.ball.size);
-    this.initSize = this.ball.size;
+    this.mainRes = this.ball.size;
     this.shape();
     this.setName();
     this.setMass();
@@ -79,18 +80,41 @@ class BallView {
   shape() {
     this.graphic.clear();
     this.graphic.beginFill(this.ball.virus ? 0x33FF33 : this.ball.color.replace('#', '0x'), 1);
-    this.graphic.drawCircle(0, 0, this.initSize);
+    this.graphic.drawCircle(0, 0, this.mainRes);
     this.graphic.endFill();
+  }
+
+  updateRes(newRes) {
+    this.mainRes = newRes;
+    this.shape();
+    if (this.mass) {
+      this.mass.style = {
+        font: `bold ${this.mainRes * 0.35}pt Ubuntu`,
+        fill: 0xFFFFFF,
+        stroke: 0x000000,
+        strokeThickness: this.mainRes * 0.035,
+      };
+      this.updateMass();
+    }
+    if (this.name) {
+      this.name.style = {
+        font: `bold ${this.mainRes * 0.35}pt Ubuntu`,
+        fill: 0xFFFFFF,
+        stroke: 0x000000,
+        strokeThickness: this.mainRes * 0.035,
+      };
+      this.updateName();
+    }
   }
 
   setName() {
     if (this.ball.name) {
       if (!this.name) {
         this.name = new PIXI.Text(this.ball.name, {
-          font: `bold ${this.initSize * 0.35}pt Ubuntu`,
+          font: `bold ${this.mainRes * 0.35}pt Ubuntu`,
           fill: 0xFFFFFF,
           stroke: 0x000000,
-          strokeThickness: 2,
+          strokeThickness: this.mainRes * 0.035,
         });
         this.ball.on('rename', () => this.updateName());
       }
@@ -106,7 +130,7 @@ class BallView {
   }
 
   updateName() {
-    this.name.resolution = 1;
+    this.name.resolution = 3;
     this.name.position.x = -this.name.width / 2;
     this.name.position.y = -this.name.height / 2;
   }
@@ -115,12 +139,11 @@ class BallView {
     if (this.ball.mine) {
       if (!this.mass) {
         this.mass = new PIXI.Text(this.ball.mass, {
-          font: `bold ${this.initSize * 0.35}pt Ubuntu`,
+          font: `bold ${this.mainRes * 0.35}pt Ubuntu`,
           fill: 0xFFFFFF,
           stroke: 0x000000,
-          strokeThickness: 2,
+          strokeThickness: this.mainRes * 0.035,
         });
-        this.ball.on('resize', () => { this.updateMass(); });
       }
       this.updateMass();
       this.container.addChild(this.mass);
@@ -135,7 +158,7 @@ class BallView {
 
   updateMass() {
     this.mass.text = this.ball.mass;
-    this.mass.resolution = 1;
+    this.mass.resolution = 3;
     this.mass.position.x = -this.mass.width / 2;
     this.mass.position.y = this.name ? this.name.height / 2 : 0;
   }
@@ -143,7 +166,7 @@ class BallView {
   render() {
     this.container.position.x = this.x.get();
     this.container.position.y = this.y.get();
-    this.container.scale.x = this.container.scale.y = this.size.get() / this.initSize;
+    this.container.scale.x = this.container.scale.y = this.size.get() / this.mainRes;
   }
 }
 
